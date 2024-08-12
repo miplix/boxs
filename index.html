@@ -107,7 +107,20 @@
       const wallets = {};
 
       lines.forEach(line => {
-        const [wallet, amount] = line.replace(/\t;\t/g, ';').split(';');
+        let [wallet, amount] = line.replace(/\t;\t/g, ';').split(';');
+        
+        // Удаляем пробелы
+        wallet = wallet.trim();
+        amount = amount ? amount.trim() : '';
+
+        // Проверяем, не содержит ли строка "NFT" после ";"
+        if (amount.toUpperCase().includes('NFT')) {
+          return; // Пропускаем эту строку
+        }
+
+        // Обрезаем кошелек до 64 символов
+        wallet = wallet.slice(0, 64);
+
         if (wallet && amount) {
           wallets[wallet] = (wallets[wallet] || 0) + parseFloat(amount);
         }
